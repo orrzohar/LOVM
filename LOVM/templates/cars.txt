@@ -1,0 +1,8 @@
+a photo of a {c}.
+a photo of the {c}.
+a photo of my {c}.
+i love my {c}!
+a photo of my dirty {c}.
+a photo of my clean {c}.
+a photo of my new {c}.
+a photo of my old {c}.

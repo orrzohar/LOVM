@@ -1,0 +1,6 @@
+nearby apple/melon
+far apple/melon
+very far apple/melon
+nearby lemon
+far lemon
+very far lemon

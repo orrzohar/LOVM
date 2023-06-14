@@ -1,0 +1,2 @@
+a photo of a {c}.
+a photo of the {c}.

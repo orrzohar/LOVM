@@ -1,0 +1,18 @@
+satellite imagery of {c}.
+aerial imagery of {c}.
+satellite photo of {c}.
+aerial photo of {c}.
+satellite view of {c}.
+aerial view of {c}.
+satellite imagery of a {c}.
+aerial imagery of a {c}.
+satellite photo of a {c}.
+aerial photo of a {c}.
+satellite view of a {c}.
+aerial view of a {c}.
+satellite imagery of the {c}.
+aerial imagery of the {c}.
+satellite photo of the {c}.
+aerial photo of the {c}.
+satellite view of the {c}.
+aerial view of the {c}.

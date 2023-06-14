@@ -1,0 +1,6 @@
+a photo of the number {c} written on a sign
+an outdoor house number {c}
+the number {c} in the center of the image
+an outdoor number {c} writte on a sign
+an outdoor number {c}
+a centered image of the number {c}

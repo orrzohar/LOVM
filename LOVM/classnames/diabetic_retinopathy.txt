@@ -1,0 +1,5 @@
+no diabetic retinopathy
+mild diabetic retinopathy
+moderate diabetic retinopathy
+severe diabetic retinopathy
+proliferative diabetic retinopathy

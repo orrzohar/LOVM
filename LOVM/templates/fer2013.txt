@@ -1,0 +1,6 @@
+a photo of a {c} looking face.
+a photo of a face showing the emotion: {c}.
+a photo of a face looking {c}.
+a face that looks {c}.
+they look {c}.
+look at how {c} they are.

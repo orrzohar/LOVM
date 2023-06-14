@@ -1,0 +1,7 @@
+angry
+disgusted
+fearful
+happy
+neutral
+sad
+surprised

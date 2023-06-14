@@ -1,0 +1,8 @@
+a photo of a {c} texture.
+a photo of a {c} pattern.
+a photo of a {c} thing.
+a photo of a {c} object.
+a photo of the {c} texture.
+a photo of the {c} pattern.
+a photo of the {c} thing.
+a photo of the {c} object.

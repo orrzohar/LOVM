@@ -1,0 +1,3 @@
+a zoomed in photo of a "{c}" traffic sign.
+a centered photo of a "{c}" traffic sign.
+a close up photo of a "{c}" traffic sign.
