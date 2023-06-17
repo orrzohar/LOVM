@@ -2,7 +2,7 @@ import pandas as pd
 import argparse
 import tqdm
 
-from modelGPT.constants import DATASET_COL, DATASET_TO_REMOVE, MODELS, PARAMETERS, FEATURE_ORDER_DICT, ALL_FEATURES, GROUND_TRUTH_CSV, MODEL_TO_REMOVE, MODEL_NAME_COL
+from modelGPT.constants import MODELS, PARAMETERS, FEATURE_ORDER_DICT, ALL_FEATURES, FEATURES_CSV
 from itertools import chain, combinations
 from modelGPT.model_gpt_predictor import ModelGPTPredictor
 from LOVM.lovm import LOVM
@@ -22,7 +22,7 @@ def create_all_subsets(ss):
     return [list(s) for s in all_sets if len(list(s)) > 0]
 
 def run_ablation(
-        df:pd.DataFrame, 
+        df_features: str = FEATURES_CSV,
         prediction: str = 'dataset_rank', 
         features_set: Iterable[str] = ALL_FEATURES,
         model_set: Union[Iterable[str], str] = 'linear_regression', 
@@ -33,7 +33,7 @@ def run_ablation(
     f"""Run ablation study for all models and feature combinations.
 
     Args:
-        df (pd.DataFrame): Dataframe containing all features and target.
+        df_features (str, optional): csv name containing all features and target.
         prediction (str, optional): Prediction type 
             (one of dataset_rank, model_rank, model_pred). 
             Defaults to 'dataset_rank'.
@@ -78,11 +78,11 @@ def run_ablation(
             grid_search_params = None
 
         # loop through all feature combinations
-        for ss in tqdm.tqdm(all_subsets, total=len(all_subsets)):
+        for ss in tqdm.tqdm(all_subsets, total=len(all_subsets), desc=model_type):
 
             # get all models and datasets
             model_gpt = ModelGPTPredictor(
-                df, features=ss, model=model, grid_search_params=grid_search_params)
+                df_features, features=ss, model=model, grid_search_params=grid_search_params)
             lovm = LOVM()
 
             # specific prediction task 
@@ -133,13 +133,6 @@ def run_ablation(
 
 def main(args): 
 
-    # read in table
-    df = pd.read_csv(GROUND_TRUTH_CSV)
-    df = df.loc[~df[DATASET_COL].isin(DATASET_TO_REMOVE)]
-    df = df.loc[~df[MODEL_NAME_COL].isin(MODEL_TO_REMOVE)]
-    #df['inter_close'] = df['inter_close'] /  df['intraclass_sim']
-    #df['intra_close'] = df['intra_close'] / df['intraclass_sim']
-
     # set parameters from argparse 
     if args.model_type is None:
         model_set = MODELS.keys()
@@ -160,7 +153,7 @@ def main(args):
 
     # run ablation study
     results_df = run_ablation(
-        df, 
+        args.features_csv,
         prediction=args.pred_type,
         features_set=features_set,
         model_set=model_set,
@@ -189,7 +182,7 @@ if __name__ == "__main__":
         "--features_csv",
         type=str,
         help="Features csv path",
-        default=GROUND_TRUTH_CSV
+        default=FEATURES_CSV
     )
     parser.add_argument(
         "-m",

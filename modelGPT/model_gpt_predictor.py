@@ -22,8 +22,8 @@ from typing import Iterable, Type, Tuple, Callable
 import pandas as pd 
 import numpy as np
 
-from modelGPT.constants import ALL_FEATURES, MODEL_NAME_COL, DATASET_COL, PRED_TARGET, GROUND_TRUTH_CSV, DATASET_TO_REMOVE, PARAMETERS, MODELS
-
+from modelGPT.constants import ALL_FEATURES, FEATURES_CSV, DATASET_TO_REMOVE, PARAMETERS, MODELS
+from LOVM.constants import MODEL_NAME_COL, DATASET_COL, PRED_TARGET, GROUND_TRUTH_CSV
 
 
 class ModelGPTPredictor:
@@ -47,14 +47,14 @@ class ModelGPTPredictor:
     
     def __init__(
             self, 
-            df:pd.DataFrame, 
+            df_features = FEATURES_CSV,
             features:Iterable[str] = ALL_FEATURES,
             model:Type = MODELS['linear_regression'],
             grid_search_params:dict = PARAMETERS['linear_regression'],
             model_name_col:str =MODEL_NAME_COL,
             dataset_col:str =DATASET_COL,
         ):
-        self.df = df
+        self.df = pd.read_csv(df_features)
 
         self.grid_search_params = grid_search_params
         self.features = features
@@ -256,14 +256,10 @@ class ModelGPTPredictor:
         return self._loo_prediction(self.all_datasets, self.predict_model_prediction)
     
 
-#### TODO
-### REMOVE - for debug only
+
 def main(): 
 
-    gt_df = pd.read_csv(GROUND_TRUTH_CSV)
-    gt_df = gt_df[~gt_df[DATASET_COL].isin(DATASET_TO_REMOVE)]
-
-    model_gpt = ModelGPTPredictor(gt_df)
+    model_gpt = ModelGPTPredictor(FEATURES_CSV)
     print(model_gpt.loo_dataset_rank())
 
 if __name__ == "__main__":

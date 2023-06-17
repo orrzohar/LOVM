@@ -5,11 +5,11 @@ from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
 
 
-GROUND_TRUTH_CSV = './modelGPT/eval_table_features.csv'
+FEATURES_CSV = './modelGPT/eval_table_features.csv'
 
 ALL_FEATURES = ['text-f1', 'text-acc1', 'intraclass_sim','inter_close','intra_close', 'superclass_metric', 'IN-score']
 DATASET_TO_REMOVE = []
-MODEL_TO_REMOVE = [ ]
+MODEL_TO_REMOVE = []
 
 MODELS = {
     'linear_regression': LinearRegression(),

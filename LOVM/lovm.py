@@ -25,12 +25,9 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 from scipy.stats import kendalltau
-from modelGPT.model_gpt_predictor import ModelGPTPredictor
 from typing import Iterable, Callable
-from modelGPT.constants import (
-    ALL_FEATURES, GROUND_TRUTH_CSV, MODEL_NAME_COL, DATASET_COL, PRED_TARGET,
-    DATASET_TO_REMOVE, NUM_RANK, MODEL_TO_REMOVE
-)
+from LOVM.constants import NUM_RANK, GROUND_TRUTH_CSV, PRED_TARGET, MODEL_NAME_COL, DATASET_COL
+
 
 
 def get_acc(pred, true, num_rank):
@@ -91,28 +88,28 @@ class LOVM:
         return_mean (bool, optional): whether to return the mean of the metrics.
     """
 
-    def __init__(self, num_rank:int = NUM_RANK, return_mean:bool = True):
+    def __init__(self, pred_target:str=PRED_TARGET, num_rank:int = NUM_RANK, return_mean:bool = True, dataset_to_remove=[], model_to_remove=[]):
 
         self.num_rank = num_rank
         self.return_mean = return_mean
         self.gt_df = pd.read_csv(GROUND_TRUTH_CSV)
 
-        self.imagenet_df = self.gt_df[~self.gt_df[DATASET_COL].isin([d for d in DATASET_TO_REMOVE if d != 'imagenet1k'])]
-        self.imagenet_df = self.imagenet_df[~self.imagenet_df[MODEL_NAME_COL].isin(MODEL_TO_REMOVE)]
-        self.gt_df = self.gt_df[~self.gt_df[DATASET_COL].isin(DATASET_TO_REMOVE)]
-        self.gt_df = self.gt_df[~self.gt_df[MODEL_NAME_COL].isin(MODEL_TO_REMOVE)]
+        self.imagenet_df = self.gt_df[~self.gt_df[DATASET_COL].isin([d for d in dataset_to_remove if d != 'imagenet1k'])]
+        self.imagenet_df = self.imagenet_df[~self.imagenet_df[MODEL_NAME_COL].isin(model_to_remove)]
+        self.gt_df = self.gt_df[~self.gt_df[DATASET_COL].isin(dataset_to_remove)]
+        self.gt_df = self.gt_df[~self.gt_df[MODEL_NAME_COL].isin(model_to_remove)]
 
         self.dataset_rank_gt_df = pd.pivot_table(
-            self.gt_df, values=PRED_TARGET, index=[DATASET_COL],
+            self.gt_df, values=pred_target, index=[DATASET_COL],
             columns=MODEL_NAME_COL
         )
         self.model_rank_gt_df = pd.pivot_table(
-            self.gt_df, values=PRED_TARGET, index=[MODEL_NAME_COL],
+            self.gt_df, values=pred_target, index=[MODEL_NAME_COL],
             columns=DATASET_COL
         )
 
         self.imagenet_df = pd.pivot_table(
-            self.imagenet_df, values=PRED_TARGET, index=[MODEL_NAME_COL],
+            self.imagenet_df, values=pred_target, index=[MODEL_NAME_COL],
             columns=DATASET_COL
         )
 
@@ -255,60 +252,21 @@ def eval_lovm(pred, gt, type='model_rank'):
 
 
 def main():
-    gt_df = pd.read_csv(GROUND_TRUTH_CSV)
-    gt_df = gt_df[~gt_df[DATASET_COL].isin(DATASET_TO_REMOVE)]
-    gt_df = gt_df[~gt_df[MODEL_NAME_COL].isin(MODEL_TO_REMOVE)]
+    from modelGPT.model_gpt_predictor import ModelGPTPredictor
+    from modelGPT.constants import FEATURES_CSV
 
-
+    df_features = pd.read_csv(FEATURES_CSV)
     lovm = LOVM()
     imagenet_baseline = lovm.get_imagenet_model_rank()
-    model_gpt = ModelGPTPredictor(gt_df)
+    model_gpt = ModelGPTPredictor(df_features)
     model_rank_rank, best_params = model_gpt.loo_model_rank()
-
-    import ipdb; ipdb.set_trace()
     df_eval = lovm.evaluate_model_rank(model_rank_rank)
     print(gen_latex(df_eval.acc.tolist()))
     print(gen_latex(df_eval.k_tau.tolist()))
 
-
-
-def main_pred():
-    gt_df = pd.read_csv(GROUND_TRUTH_CSV)
-    gt_df = gt_df[~gt_df[DATASET_COL].isin(DATASET_TO_REMOVE)]
-    gt_df = gt_df[~gt_df[MODEL_NAME_COL].isin(MODEL_TO_REMOVE)]
-
-
-    lovm = LOVM()
-    imagenet_baseline = lovm.get_imagenet_model_pred()
-    model_gpt = ModelGPTPredictor(gt_df)
-    model_pred, _ = model_gpt.loo_model_pred()
-
-    import ipdb; ipdb.set_trace()
-    df_eval = lovm.evaluate_model_pred(model_pred)
-    print(gen_latex(df_eval.l1.tolist()))
-
-
-def main_dataset():
-    gt_df = pd.read_csv(GROUND_TRUTH_CSV)
-    gt_df = gt_df[~gt_df[DATASET_COL].isin(DATASET_TO_REMOVE)]
-    gt_df = gt_df[~gt_df[MODEL_NAME_COL].isin(MODEL_TO_REMOVE)]
-
-    lovm = LOVM()
-    imagenet_baseline = lovm.get_imagenet_model_rank()
-    model_gpt = ModelGPTPredictor(gt_df, features=ALL_FEATURES)
-    model_rank_pred, best_params = model_gpt.loo_dataset_rank()
-
-    print("ImageNet baseline")
-    df_eval = lovm.evaluate_model_rank(imagenet_baseline)
-    print(gen_latex(df_eval.acc.tolist()))
-    print(gen_latex(df_eval.k_tau.tolist()))
-
-    df_eval = lovm.evaluate_model_rank(model_rank_rank)
-    print(gen_latex(df_eval.acc.tolist()))
-    print(gen_latex(df_eval.k_tau.tolist()))
 
 def gen_latex(list):
     return " \hspace{-0.4em} & \hspace{-0.9em} ".join([str(round(f, 2)) for f in list[:-1]] + [str(round(list[-1],3))])
 
 if __name__ == "__main__":
-    main_pred()
+    main()
