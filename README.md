@@ -135,13 +135,14 @@ these resources.
 If you found LOVM useful, please consider citing:
 
 ```bibtex
-@misc{zohar2023lovm,
-      title={LOVM: Language-Only Vision Model Selection}, 
-      author={Orr Zohar and Shih-Cheng Huang and Kuan-Chieh Wang and Serena Yeung},
-      year={2023},
-      eprint={2306.08893},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@article{zohar2023lovm,
+    title={LOVM: Language-Only Vision Model Selection}, 
+    author={Orr Zohar and Shih-Cheng Huang and Kuan-Chieh Wang and Serena Yeung},
+    year={2023},
+    journal={arXiv preprint arXiv:2306.08893},
+    eprint={2306.08893},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV}
 }
 ```
 
