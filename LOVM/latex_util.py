@@ -124,6 +124,9 @@ def model_main_table(df):
     for col in df.columns:
         print(f'############ {col} #############')
         print('   &  '.join(df[col].index))
-        print(' \hspace{-0.4em} & \hspace{-0.9em} '.join([str(round(f, 2)) for f in df[col].values]))
+        print(' \hspace{-0.4em} & \hspace{-0.9em} '.join(
+            [f"{f:.3f}" if idx == len(df[col].values) - 1 and label == 'mean' else f"{f:.2f}"
+             for idx, (label, f) in enumerate(zip(df.index, df[col].values))]
+        ))
 
 

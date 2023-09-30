@@ -22,8 +22,8 @@ from typing import Iterable, Type, Tuple, Callable
 import pandas as pd 
 import numpy as np
 
-from modelGPT.constants import ALL_FEATURES, FEATURES_CSV, DATASET_TO_REMOVE, PARAMETERS, MODELS
-from LOVM.constants import MODEL_NAME_COL, DATASET_COL, PRED_TARGET, GROUND_TRUTH_CSV
+from modelGPT.constants import ALL_FEATURES, FEATURES_CSV, PARAMETERS, MODELS
+from LOVM.constants import MODEL_NAME_COL, DATASET_COL
 
 
 class ModelGPTPredictor:
@@ -51,8 +51,9 @@ class ModelGPTPredictor:
             features:Iterable[str] = ALL_FEATURES,
             model:Type = MODELS['linear_regression'],
             grid_search_params:dict = PARAMETERS['linear_regression'],
-            model_name_col:str =MODEL_NAME_COL,
-            dataset_col:str =DATASET_COL,
+            model_name_col:str = MODEL_NAME_COL,
+            dataset_col:str = DATASET_COL,
+            pred_target:str = "acc1",
         ):
         self.df = pd.read_csv(df_features)
 
@@ -61,6 +62,7 @@ class ModelGPTPredictor:
         self.model = model
         self.model_name_col = model_name_col
         self.dataset_col = dataset_col
+        self.pred_target=pred_target
 
         self.all_datasets = self.df.dataset.unique()
         self.all_models = self.df.model_fullname.unique()
@@ -102,8 +104,7 @@ class ModelGPTPredictor:
         return model_pred, best_params   
     
     def _predict_target(
-            self, split_col:str, split_val:str, target_type:str, 
-            pred_target=PRED_TARGET
+            self, split_col:str, split_val:str, target_type:str, pred_target:str, 
         ) -> Tuple[pd.DataFrame, dict]:
         f"""Generic function to predict the pred_target based on features.
         Since this is an evaluation of leave one out, we split the data
@@ -152,7 +153,7 @@ class ModelGPTPredictor:
             split_col=self.model_name_col, 
             split_val=test_model, 
             target_type=self.dataset_col,
-            pred_target=PRED_TARGET,
+            pred_target=self.pred_target,
         )
         
     def predict_model_rank(self, test_dataset:set) -> Tuple[pd.DataFrame, dict]:
@@ -171,8 +172,8 @@ class ModelGPTPredictor:
         df_list= []
         for d in np.unique(self.df.dataset):
             df_dataset = self.df.loc[self.df.dataset == d].copy()
-            dataset_mean = df_dataset[PRED_TARGET].mean()
-            df_dataset[f"norm_{PRED_TARGET}"] = df_dataset[PRED_TARGET] - dataset_mean
+            dataset_mean = df_dataset[self.pred_target].mean()
+            df_dataset[f"norm_{self.pred_target}"] = df_dataset[self.pred_target] - dataset_mean
             df_list.append(df_dataset)
         self.df = pd.concat(df_list)
 
@@ -180,7 +181,7 @@ class ModelGPTPredictor:
             split_col=self.dataset_col, 
             split_val=test_dataset, 
             target_type=self.model_name_col, 
-            pred_target=f'norm_{PRED_TARGET}',
+            pred_target=f'norm_{self.pred_target}',
         )
 
     def predict_model_prediction(
@@ -200,7 +201,7 @@ class ModelGPTPredictor:
             split_col=self.dataset_col, 
             split_val=test_dataset, 
             target_type=self.model_name_col, 
-            pred_target=PRED_TARGET,
+            pred_target=self.pred_target,
         )
     
     def _loo_prediction(

@@ -75,6 +75,60 @@ model_pred = model_gpt.loo_model_pred()
 ```
 
 
+### Evaluation
+
+You can use `generate_results.py`. To evaluate model ranking/performance prediction,
+we run:
+```bash 
+python generate_results.py --model_type linear_regression --pred_type model_rank --pred_target 'acc1'
+python generate_results.py --model_type linear_regression --pred_type model_pred --pred_target 'acc1'
+python generate_results.py --model_type linear_regression --pred_type model_rank --pred_target 'mean_per_class_recall'
+python generate_results.py --model_type linear_regression --pred_type model_pred --pred_target 'mean_per_class_recall'
+```
+
+To reproduce the results from our paper, simply run ``eval.sh``
+
+To run on a subset of the scores, like in the main table, use the `--scores` flag:
+```bash 
+python generate_results.py --model_type linear_regression --pred_type model_rank --scores 'INB'
+python generate_results.py --model_type linear_regression --pred_type model_rank --scores 'G,INB'
+python generate_results.py --model_type linear_regression --pred_type model_rank --scores 'G,C,INB'
+```
+or any of their subsets. You can use the `--pred_target` to change the default target (top-1 accuracy) with 
+mean per-class recall.
+
+### Ablations
+
+To ablate modelGPT, and generate the ablation tables in the manuscript, we run:
+```bash 
+python generate_results.py --model_type linear_regression --pred_type model_rank --print_best false
+python generate_results.py --model_type linear_regression --pred_type model_pred --print_best false
+```
+
+To print the per-dataset breakdown (like in our appendix), set the `--print_full_table true`: 
+```bash 
+python generate_results.py --model_type linear_regression --pred_type model_rank --scores C,G,INB --ablate_subset true  --print_full_table true 
+```
+
+
+### Additional Ablations:
+Do ablation on the model type by removing the --model_type flag
+```bash 
+python generate_results.py --model_type linear_regression --pred_type model_rank --ablate_subset true
+```
+
+Add in hyperparameter search by add in --grid_search flag
+```bash 
+python generate_results.py --model_type linear_regression --pred_type model_rank --grid_search --ablate_subset true
+```
+
+
+To evaluate specific subset of scores
+```bash 
+python generate_results.py --model_type linear_regression --pred_type model_rank --subscoreses text-f1,intraclass_sim,inter_close
+```
+
+
 ## Results
 Our model ranking and performance prediction results for both top-1 accuracy and mean per-class recall are:
 

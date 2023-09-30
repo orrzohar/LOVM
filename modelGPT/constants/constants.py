@@ -5,9 +5,16 @@ from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
 
 
+
 FEATURES_CSV = './modelGPT/eval_table_features.csv'
 
-ALL_FEATURES = ['text-f1', 'text-acc1', 'intraclass_sim','inter_close','intra_close', 'superclass_metric', 'IN-score']
+G = ['intraclass_sim','inter_close','intra_close', 'superclass_metric']
+C = ['text-f1', 'text-acc1']
+INB = ['IN-score']
+
+ALL_FEATURES = C + G + INB
+FEATURES_SET = {"C":C, "G":G, "INB":INB}
+
 DATASET_TO_REMOVE = []
 MODEL_TO_REMOVE = []
 
@@ -20,6 +27,7 @@ MODELS = {
 }
 
 PRED_TARGET = 'acc1'#'mean_per_class_recall'
+PRED_TARGET = 'mean_per_class_recall'
 NUM_RANK = 5
 MODEL_NAME_COL = 'model_fullname'
 DATASET_COL = 'dataset'

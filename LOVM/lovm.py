@@ -26,7 +26,7 @@ import numpy as np
 from collections import defaultdict
 from scipy.stats import kendalltau
 from typing import Iterable, Callable
-from LOVM.constants import NUM_RANK, GROUND_TRUTH_CSV, PRED_TARGET, MODEL_NAME_COL, DATASET_COL
+from LOVM.constants import NUM_RANK, GROUND_TRUTH_CSV, MODEL_NAME_COL, DATASET_COL
 
 
 
@@ -88,7 +88,7 @@ class LOVM:
         return_mean (bool, optional): whether to return the mean of the metrics.
     """
 
-    def __init__(self, pred_target:str=PRED_TARGET, num_rank:int = NUM_RANK, return_mean:bool = True, dataset_to_remove=[], model_to_remove=[]):
+    def __init__(self, pred_target:str="acc1", num_rank:int = NUM_RANK, return_mean:bool = True, dataset_to_remove=[], model_to_remove=[]):
 
         self.num_rank = num_rank
         self.return_mean = return_mean

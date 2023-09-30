@@ -1,7 +1,15 @@
-# LOVM - Language-Only Vision Model Selection
+# [NeurIPS 2023] LOVM: Language-Only Vision Model Selection
+Repository for the paper "LOVM: Language-Only Vision Model Selection", accepted to NeurIPS 2023 (Dataset and Benchmarks)
+
+
 [`Paper`](https://arxiv.org/abs/2306.08893) [`Website`](https://orrzohar.github.io/projects/lovm/) 
 
 #### [Orr Zohar](https://orrzohar.github.io/), [Mars Huang](https://marshuang80.github.io/), [Jackson Wang](https://wangkua1.github.io/), [Serena Yeung](https://marvl.stanford.edu/people.html)
+
+
+
+
+
 
 ## Abstract
 

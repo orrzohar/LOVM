@@ -1,37 +1,35 @@
-import pandas as pd
+import pandas as pd 
 import argparse
 import tqdm
 
-from modelGPT.constants import MODELS, PARAMETERS, FEATURE_ORDER_DICT, ALL_FEATURES, FEATURES_CSV, FEATURES_SET
+from modelGPT.constants import MODELS, PARAMETERS, FEATURE_ORDER_DICT, ALL_FEATURES, FEATURES_CSV
 from itertools import chain, combinations
 from modelGPT.model_gpt_predictor import ModelGPTPredictor
 from LOVM.lovm import LOVM
-from collections import defaultdict
+from collections import defaultdict 
 from typing import Iterable, Union
 
 from LOVM.latex_util import (
-    dataset_rank_abalation_latex,
-    model_rank_abalation_latex,
+    dataset_rank_abalation_latex, 
+    model_rank_abalation_latex, 
     model_pred_abalation_latex,
     model_main_table
 )
 
-
 # get all feature combinations
 def create_all_subsets(ss):
-    all_sets = list(chain(*map(lambda x: combinations(ss, x), range(0, len(ss) + 1))))
+    all_sets = list(chain(*map(lambda x: combinations(ss, x), range(0, len(ss)+1))))
     return [list(s) for s in all_sets if len(list(s)) > 0]
-
 
 def run_ablation(
         df_features: str = FEATURES_CSV,
-        prediction: str = 'dataset_rank',
+        prediction: str = 'dataset_rank', 
         features_set: Iterable[str] = ALL_FEATURES,
-        model_set: Union[Iterable[str], str] = 'linear_regression',
-        grid_search: bool = False,
+        model_set: Union[Iterable[str], str] = 'linear_regression', 
+        grid_search: bool = False, 
         ablate_subset: bool = True,
-        pred_target='acc1',
-) -> pd.DataFrame:
+        print_full_table = False,
+    ) -> pd.DataFrame:
     f"""Run ablation study for all models and feature combinations.
 
     Args:
@@ -50,11 +48,10 @@ def run_ablation(
     """
 
     # dict to store results
-    full_results = []
     results = defaultdict(list)
-
+    
     # check if prediciton type is valid
-    if prediction not in ['dataset_rank', 'model_rank', 'model_pred']:
+    if prediction not in  ['dataset_rank', 'model_rank', 'model_pred']:
         raise ValueError(f"prediction must be either 'dataset_rank', 'model_rank' or 'model_pred', got {prediction}")
 
     # store model type in list if there is only one model type
@@ -67,7 +64,7 @@ def run_ablation(
     # create all feature combinations for ablation
     if ablate_subset:
         all_subsets = create_all_subsets(features_set)
-    else:
+    else: 
         all_subsets = [features_set]
 
     # loop through all models to ablate
@@ -75,9 +72,9 @@ def run_ablation(
 
         # select model and get grid search parameters
         model = MODELS[model_type]
-        if grid_search:
+        if grid_search: 
             grid_search_params = PARAMETERS[model_type]
-        else:
+        else: 
             grid_search_params = None
 
         # loop through all feature combinations
@@ -85,10 +82,10 @@ def run_ablation(
 
             # get all models and datasets
             model_gpt = ModelGPTPredictor(
-                df_features, features=ss, model=model, grid_search_params=grid_search_params, pred_target=pred_target)
-            lovm = LOVM(pred_target=pred_target)
+                df_features, features=ss, model=model, grid_search_params=grid_search_params)
+            lovm = LOVM()
 
-            # specific prediction task
+            # specific prediction task 
             if prediction == 'dataset_rank':
                 if len(ss) == 1 and ss[0] == 'IN-score':
                     pred = lovm.get_imagenet_dataset_rank()
@@ -110,106 +107,74 @@ def run_ablation(
                 metric = lovm.evaluate_model_rank(pred)
                 results['acc'].append(metric.loc['mean', 'acc'])
                 results['k_tau'].append(metric.loc['mean', 'k_tau'])
-            else:
+            else: 
                 if len(ss) == 1 and ss[0] == 'IN-score':
                     pred = lovm.get_imagenet_model_pred()
                     best_param = None
                 else:
                     pred, best_param = model_gpt.loo_model_pred()
-
+                    
                 metric = lovm.evaluate_model_pred(pred)
                 results['l1'].append(metric.loc['mean', 'l1'])
 
-            full_results.append(metric)
             results['features'].append(ss)
             results['model'].append(model_type)
             results['best_param'].append(best_param)
 
     # aggregate results to dataframe
-    results_df = pd.DataFrame.from_dict(results)
+    results_df = pd.DataFrame.from_dict(results) 
     results_df = round(results_df, 3)
     results_df['num_features'] = results_df.features.apply(lambda x: len(x))
-    return results_df, full_results
+    if print_full_table:
+        model_main_table(metric)
 
+    return results_df
+            
 
-def main(args):
-    # set parameters from argparse
+def main(args): 
+
+    # set parameters from argparse 
     if args.model_type is None:
         model_set = MODELS.keys()
     else:
         model_set = [args.model_type]
-
-    if args.scores is not None:
-        features_set = []
-        for f in args.scores.split(','):
-            features_set += FEATURES_SET[f]
-    elif args.subscores is not None:
-        features_set = args.subscores.split(',')
-    else:
+    if args.features is not None:
+        features_set = args.features.split(',')
+    else: 
         features_set = ALL_FEATURES
+    if args.grid_search is not None:
+        grid_search = True
+    else: 
+        grid_search = False 
+    if args.ablate_subset is not None:
+        ablate_subset = True
+    else:
+        ablate_subset = False
 
     # run ablation study
-    results_df, full_results = run_ablation(
+    results_df = run_ablation(
         args.features_csv,
         prediction=args.pred_type,
         features_set=features_set,
         model_set=model_set,
-        grid_search=args.grid_search,
-        ablate_subset=args.no_subsets,
-        pred_target=args.pred_target
+        grid_search=grid_search,
+        ablate_subset=ablate_subset,
+        print_full_table=args.print_full_table
     )
 
     # print latex
     if args.pred_type == 'dataset_rank':
         print(dataset_rank_abalation_latex(results_df))
     elif args.pred_type == 'model_rank':
-        if args.print_full_table:
-            max_acc_row = results_df[results_df['acc'] == results_df['acc'].max()]
-
-            # If there are multiple rows with the same maximum "acc" value,
-            # select the one with the maximum "k_tau" value
-            if len(max_acc_row) > 1:
-                max_acc_row = max_acc_row[max_acc_row['k_tau'] == max_acc_row['k_tau'].max()]
-
-            full_results = [f for f in full_results if round(f['acc']['mean'], 3) == max_acc_row['acc'].max()]
-            full_results = [f for f in full_results if round(f['k_tau']['mean'], 3) == max_acc_row['k_tau'].max()]
-            model_main_table(full_results[0])
-
-        if args.print_ablation:
-            max_acc_row = results_df[results_df['acc'] == results_df['acc'].max()]
-
-            # If there are multiple rows with the same maximum "acc" value,
-            # select the one with the maximum "k_tau" value
-            if len(max_acc_row) > 1:
-                max_acc_row = max_acc_row[max_acc_row['k_tau'] == max_acc_row['k_tau'].max()]
-
-            max_acc_row['scores'] = '+'.join(args.scores.split(','))
-            print(max_acc_row[['scores', 'k_tau', 'acc']].to_latex(index=False, escape=False, column_format='c|cc',
-                                                                   float_format="%.3f"))
-
-        else:
-            print(model_rank_abalation_latex(results_df))
-
-
+        print(model_rank_abalation_latex(results_df))
     elif args.pred_type == 'model_pred':
-        if args.print_full_table:
-            max_acc_row = results_df[results_df['l1'] == results_df['l1'].min()]
-            full_results = [f for f in full_results if round(f['l1']['mean'], 3) == max_acc_row['l1'].min()]
-            model_main_table(full_results[0])
-
-        if args.print_ablation:
-            min_l1_row = results_df[results_df['l1'] == results_df['l1'].min()]
-            min_l1_row['scores'] = '+'.join(args.scores.split(','))
-            print(min_l1_row[['scores', 'l1']].to_latex(index=False, escape=False, column_format='c|c',
-                                                        float_format="%.3f"))
-
-        else:
-            print(model_pred_abalation_latex(results_df))
-    else:
+        print(model_pred_abalation_latex(results_df))
+    else: 
         print('unknown task requested')
 
 
 if __name__ == "__main__":
+
     # parse argument
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -229,8 +194,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "-g",
         "--grid_search",
-        action="store_true",
-        default=False,
+        type=str,
+        help="grid search",
+        default=None
     )
     parser.add_argument(
         "-p",
@@ -240,37 +206,23 @@ if __name__ == "__main__":
         default='model_pred'
     )
     parser.add_argument(
-        "--scores",
+        "--features",
         type=str,
-        help="scores to use",
-        default='G,C,INB',
-    )
-    parser.add_argument(
-        "--subscores",
-        type=str,
-        help="subscores to use",
+        help="features to use",
         default=None,
     )
     parser.add_argument(
-        "--no_subsets",
-        action="store_false",
-        default=True,
+        "-a",
+        "--ablate_subset",
+        type=str,
+        help="features to use",
+        default=None,
     )
     parser.add_argument(
         "--print_full_table",
         type=str,
         help="print dataset breaks",
         default=False,
-    )
-    parser.add_argument(
-        "--print_ablation",
-        action="store_false",
-        default=True,
-    )
-    parser.add_argument(
-        "--pred_target",
-        type=str,
-        default='acc1',
     )
     # parse args
     args = parser.parse_args()
