@@ -1,4 +1,4 @@
-# [NeurIPS 2023] LOVM: Language-Only Vision Model Selection
+# LOVM: Language-Only Vision Model Selection (NeurIPS 2023)
 Repository for the paper "LOVM: Language-Only Vision Model Selection", accepted to NeurIPS 2023 (Dataset and Benchmarks)
 
 
