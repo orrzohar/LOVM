@@ -1,2 +1,0 @@
-a photo of a {c}, a type of aircraft.
-a photo of the {c}, a type of aircraft.
