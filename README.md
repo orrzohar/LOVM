@@ -1,8 +1,7 @@
-# LOVM: Language-Only Vision Model Selection (NeurIPS 2023)
-Repository for the paper "LOVM: Language-Only Vision Model Selection", accepted to NeurIPS 2023 (Dataset and Benchmarks)
+# LOVM: Language-Only Vision Model Selection (NeurIPS D&B 2023)
 
 
-[`Paper`](https://arxiv.org/abs/2306.08893) [`Website`](https://orrzohar.github.io/projects/lovm/) 
+[`paper`](https://openreview.net/forum?id=MLLp6AHQFs) [`arXiv`](https://arxiv.org/abs/2306.08893) [`website`](https://orrzohar.github.io/projects/lovm/) 
 
 #### [Orr Zohar](https://orrzohar.github.io/), [Mars Huang](https://marshuang80.github.io/), [Jackson Wang](https://wangkua1.github.io/), [Serena Yeung](https://marvl.stanford.edu/people.html)
 
@@ -143,14 +142,13 @@ these resources.
 If you found LOVM useful, please consider citing:
 
 ```bibtex
-@article{zohar2023lovm,
-    title={LOVM: Language-Only Vision Model Selection}, 
-    author={Orr Zohar and Shih-Cheng Huang and Kuan-Chieh Wang and Serena Yeung},
-    year={2023},
-    journal={arXiv preprint arXiv:2306.08893},
-    eprint={2306.08893},
-    archivePrefix={arXiv},
-    primaryClass={cs.CV}
+@inproceedings{
+        zohar2023lovm,
+        title={{LOVM}: Language-Only Vision Model Selection},
+        author={Orr Zohar and Shih-Cheng Huang and Kuan-Chieh Wang and Serena Yeung},
+        booktitle={Thirty-seventh Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+        year={2023},
+        url={https://openreview.net/forum?id=MLLp6AHQFs}
 }
 ```
 
