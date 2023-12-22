@@ -1,0 +1,48 @@
+a photo of a person {c}.
+a video of a person {c}.
+a example of a person {c}.
+a demonstration of a person {c}.
+a photo of the person {c}.
+a video of the person {c}.
+a example of the person {c}.
+a demonstration of the person {c}.
+a photo of a person using {c}.
+a video of a person using {c}.
+a example of a person using {c}.
+a demonstration of a person using {c}.
+a photo of the person using {c}.
+a video of the person using {c}.
+a example of the person using {c}.
+a demonstration of the person using {c}.
+a photo of a person doing {c}.
+a video of a person doing {c}.
+a example of a person doing {c}.
+a demonstration of a person doing {c}.
+a photo of the person doing {c}.
+a video of the person doing {c}.
+a example of the person doing {c}.
+a demonstration of the person doing {c}.
+a photo of a person during {c}.
+a video of a person during {c}.
+a example of a person during {c}.
+a demonstration of a person during {c}.
+a photo of the person during {c}.
+a video of the person during {c}.
+a example of the person during {c}.
+a demonstration of the person during {c}.
+a photo of a person performing {c}.
+a video of a person performing {c}.
+a example of a person performing {c}.
+a demonstration of a person performing {c}.
+a photo of the person performing {c}.
+a video of the person performing {c}.
+a example of the person performing {c}.
+a demonstration of the person performing {c}.
+a photo of a person practicing {c}.
+a video of a person practicing {c}.
+a example of a person practicing {c}.
+a demonstration of a person practicing {c}.
+a photo of the person practicing {c}.
+a video of the person practicing {c}.
+a example of the person practicing {c}.
+a demonstration of the person practicing {c}.
