@@ -1,6 +1,5 @@
 very nearby
 nearby
 near
-
 distant
 very distant
